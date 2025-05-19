@@ -36,9 +36,19 @@
       }
     }
 
-    // FIX: Always use uppercase transliteration if available
-    if (e.ucc[u]) {
-      i.push(e.ucc[u]);
+    // Context: is the current char uppercase?
+    var isUpper = u === u.toUpperCase();
+    var nextIsLower = a && a === a.toLowerCase();
+    var prev = o[r - 1] || ' ';
+    var atWordStart = !/[a-zA-Zа-яА-ЯёЁ]/.test(prev);
+
+    // Title-case transliteration for first uppercase letters
+    if (isUpper && e.ucc[u]) {
+      if (atWordStart && nextIsLower) {
+        i.push(e.ucc[u][0] + e.ucc[u].slice(1).toLowerCase());  // e.g., "Zh"
+      } else {
+        i.push(e.ucc[u]);  // e.g., "ZH"
+      }
     } else {
       i.push(c);
     }
