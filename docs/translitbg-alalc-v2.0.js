@@ -13,52 +13,33 @@
     default: function (t) {
       return function (t, e) {
         for (var s, i = [], o = t.split(""), r = 0; r < o.length; r++) {
-  var u = o[r],
-      c = e.c[u];
-  var a = o[r + 1];
+          var u = o[r],
+            c = e.c[u];
+          var a = o[r + 1];
 
-  // ALA-LC: Final-position ъ becomes "
-  if ((u === 'ъ' || u === 'Ъ') && (!a || !/[\p{Script=Cyrillic}]/u.test(a))) {
-    i.push('"');
-    s = u;
-    continue;
-  }
+          // ALA-LC: Final-position ъ becomes "
+          if ((u === 'ъ' || u === 'Ъ') && (!a || !/[\p{Script=Cyrillic}]/u.test(a))) {
+            i.push('"');
+            s = u;
+            continue;
+          }
 
-  if (c) {
-    if (a) {
-      var h = e.t[u + a];
-      if (h) {
-        var n = o[r + 2];
-        if (!n || !/^\w+$/.test(n)) {
-          i.push(h), r++, s = n;
-          continue;
+          if (c) {
+            if (a) {
+              var h = e.t[u + a];
+              if (h) {
+                var n = o[r + 2];
+                if (!n || !/^\w+$/.test(n)) {
+                  i.push(h), r++, s = n;
+                  continue;
+                }
+              }
+            }
+            var n = e.ucc[u];
+            !n || (a && !f[a] && e.c[a] && !e.c[s]) ? i.push(c) : i.push(n);
+          } else i.push(u);
+          s = u;
         }
-      }
-    }
-
-    // Context: is the current char uppercase?
-    var isUpper = u === u.toUpperCase();
-    var nextIsLower = a && a === a.toLowerCase();
-    var prev = o[r - 1] || ' ';
-    var atWordStart = !/[a-zA-Zа-яА-ЯёЁ]/.test(prev);
-
-    // Title-case transliteration for first uppercase letters
-    if (isUpper && e.ucc[u]) {
-      if (atWordStart && nextIsLower) {
-        i.push(e.ucc[u][0] + e.ucc[u].slice(1).toLowerCase());  // e.g., "Zh"
-      } else {
-        i.push(e.ucc[u]);  // e.g., "ZH"
-      }
-    } else {
-      i.push(c);
-    }
-
-  } else {
-    i.push(u);
-  }
-
-  s = u;
-}
         return i.join("");
       }(t, s);
     },
